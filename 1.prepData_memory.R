@@ -133,8 +133,7 @@ setwd(InputDirectory)
 
 # select samples to keep for analysis
 
-sample_md <- sample_md %>%
-  dplyr::filter(Tissue == "BM")
+sample_md <- sample_md 
 
 sample_md
 
@@ -152,8 +151,8 @@ sample_md
 sample_md <- sample_md %>% mutate(Filename = gsub(".csv", ".fcs", Filename)) %>%
   rename(file_name = Filename) %>%
   rename(patient_id = PT_ID) %>%
-  mutate(condition = ifelse(Expanded, "Exp", "Nexp")) %>%
-  mutate(sample_id = paste(Disease, patient_id, sep = "-")) %>%
+  mutate(condition = Tissue) %>%
+  mutate(sample_id = paste(Disease, patient_id, Tissue, sep = "-")) %>%
   select(file_name, patient_id, condition, sample_id)
 sample_md
 

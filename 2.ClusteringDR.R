@@ -57,10 +57,13 @@ n_events <- min(n_cells(sce))
 sce <- runDR(sce, dr =  "UMAP", cells = n_cells, features = "type")
 
 plotAbundances(sce, k = "meta8", by = "cluster_id", group_by = "condition")
+ggsave(filename = file.path(OutputDirectory, "ExpVsNExp_Abundance.pdf"))
 plotExprHeatmap(sce, features = type_markers(sce), k = "meta8", by = "cluster_id",
                 fun = "mean", scale = "last", bars = TRUE, perc = TRUE)
+ggsave(filename = file.path(OutputDirectory, "ExpVsNExp_Heatmap.pdf"))
 CATALYST::plotDR(sce, dr = "UMAP", color_by = "meta8", facet_by = "condition") +
   geom_density2d(binwidth = 0.006, colour = "black")
+ggsave(filename = file.path(OutputDirectory, "UMAP_ExpVsNExp.pdf"))
 
 annotation_table <- as.data.frame(cbind(c(1:8), c(1:8)))
 
