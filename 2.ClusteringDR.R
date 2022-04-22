@@ -90,4 +90,4 @@ out_DA <- diffcyt(sce,
                   clustering_to_use = "cluster_annotation", verbose = TRUE, subsampling = TRUE,
                   transform = FALSE, normalize = FALSE, min_cells = 50, min_samples = 2)
 da <- rowData(out_DA$res)
-plotDiffHeatmap(sce, da, top_n = 12, all = TRUE, fdr = FDR_cutoff)
+plotDiffHeatmap(sce, da, top_n = 8, all = TRUE, fdr = FDR_cutoff)

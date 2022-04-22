@@ -61,24 +61,24 @@ setwd(PrimaryDirectory)
 
 # # Step 3
 # 
-metadata <- read_csv(file = file.path(MetaDirectory, "metadata.csv"))
-
-patient_id <- as_tibble(unique(metadata$MRN)) %>% rename(., MRN = value) %>%
-  rownames_to_column(.) %>%
-  mutate(PT_ID = paste("PT", rowname, sep = "_")) %>%
-  select(MRN, PT_ID)
-
-metadata <- metadata %>% mutate(Disease = "AML") %>%
-  rename(., Filename = filenames) %>%
-  rename(., Sample = "Barcode [Parent]") %>%
-  rename(., origin = 'Specimen Source') %>%
-  left_join(., patient_id, by = c("MRN")) %>%
-  mutate(Tissue = ifelse(grepl("PBL",origin), "PB", "BM")) %>%
-  select(Filename, Sample, PT_ID, MRN, Disease, Tissue, Expanded) %>%
-  arrange(PT_ID)
+# metadata <- read_csv(file = file.path(MetaDirectory, "metadata.csv"))
 # 
+# patient_id <- as_tibble(unique(metadata$MRN)) %>% rename(., MRN = value) %>%
+#   rownames_to_column(.) %>%
+#   mutate(PT_ID = paste("PT", rowname, sep = "_")) %>%
+#   select(MRN, PT_ID)
 # 
-metadata %>% write_csv(file = file.path(MetaDirectory, "tidy_metadata.csv"))
+# metadata <- metadata %>% mutate(Disease = "AML") %>%
+#   rename(., Filename = filenames) %>%
+#   rename(., Sample = "Barcode [Parent]") %>%
+#   rename(., origin = 'Specimen Source') %>%
+#   left_join(., patient_id, by = c("MRN")) %>%
+#   mutate(Tissue = ifelse(grepl("PBL",origin), "PB", "BM")) %>%
+#   select(Filename, Sample, PT_ID, MRN, Disease, Tissue, Expanded) %>%
+#   arrange(PT_ID)
+# # 
+# # 
+# metadata %>% write_csv(file = file.path(MetaDirectory, "tidy_metadata.csv"))
 
 
 
@@ -133,7 +133,7 @@ setwd(InputDirectory)
 
 # select samples to keep for analysis
 
-sample_md <- sample_md %>% 
+sample_md <- sample_md %>%
   dplyr::filter(Tissue == "BM")
 
 sample_md
@@ -143,18 +143,19 @@ fcsFiles %in% gsub(".csv", ".fcs", sample_md$Filename)
 fcsToLoad <- fcsFiles[fcsFiles %in% gsub(".csv", ".fcs", sample_md$Filename)]
 # read fcs files as flowSet and add $CYT keyword
 fs <- read.flowSet(files = fcsToLoad, path = fcsDir, truncate_max_range = FALSE)
-
+fs
 
 # create tibble sample_md
 sample_md
 
-# prep sample_md for sCE (prepData)
+# prep sample_md for SCE (prepData)
 sample_md <- sample_md %>% mutate(Filename = gsub(".csv", ".fcs", Filename)) %>%
   rename(file_name = Filename) %>%
   rename(patient_id = PT_ID) %>%
   mutate(condition = ifelse(Expanded, "Exp", "Nexp")) %>%
   mutate(sample_id = paste(Disease, patient_id, sep = "-")) %>%
   select(file_name, patient_id, condition, sample_id)
+sample_md
 
 # create tibble panel_md
 fcs_colname <- colnames(fs)
@@ -183,7 +184,7 @@ subsetSCE <- function(x, n_cells){
 sub_sce <- subsetSCE(sce, 15000)
 
 
-pbMDS(sub_sce, dims = c(1,2), fun = "median", features = type_markers(sce),
+pbMDS(sce, dims = c(1,2), fun = "median", features = type_markers(sce),
       size_by = TRUE, by = "sample_id")
 
 sce <- sub_sce
