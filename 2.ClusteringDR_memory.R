@@ -53,7 +53,7 @@ sce <- cluster(sce, features = "type", xdim = 10, ydim = 10, maxK = 20,
                verbose = TRUE, seed = seed)
 delta_area(sce)
 # Run dimensionality reduction
-n_cells <- 5000
+n_cells <- 1000
 n_events <- min(n_cells(sce))
 sce <- runDR(sce, dr =  "UMAP", cells = n_cells, features = "type")
 
@@ -82,9 +82,11 @@ FDR_cutoff <- 0.05
 ei <- sce@metadata$experiment_info
 plotAbundances(sce, k = "cluster_annotation", by = "cluster_id", group_by = "condition")
 ggsave(file.path(OutputDirectory, "BMvsPB_Abundance.pdf"), plot = last_plot())
+pdf(file.path(OutputDirectory, "BMvsPB_Heatmap.pdf"))
 plotExprHeatmap(sce, features = type_markers(sce), k = "cluster_annotation", 
                 by = "cluster_id", scale = "last", bars = TRUE, perc = TRUE)
-ggsave(file.path(OutputDirectory, "BMvsPB_Heatmap.pdf"), plot = last_plot())
+dev.off()
+
 
 # DA using edgeR
 design <- createDesignMatrix(ei,
